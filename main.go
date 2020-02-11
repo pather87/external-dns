@@ -239,6 +239,17 @@ func main() {
 		if err == nil {
 			p, err = provider.NewOCIProvider(*config, domainFilter, zoneIDFilter, cfg.DryRun)
 		}
+	case "ovh":
+		p, err = provider.NewOVHProvider(
+			&provider.OVHConfig{
+				Endpoint:          cfg.OVHEndpoint,
+				ApplicationKey:    cfg.OVHApplicationKey,
+				ApplicationSecret: cfg.OVHApplicationSecret,
+				ConsumerKey:       cfg.OVHConsumerKey,
+			},
+			domainFilter,
+			cfg.DryRun,
+		)
 	case "rfc2136":
 		p, err = provider.NewRfc2136Provider(cfg.RFC2136Host, cfg.RFC2136Port, cfg.RFC2136Zone, cfg.RFC2136Insecure, cfg.RFC2136TSIGKeyName, cfg.RFC2136TSIGSecret, cfg.RFC2136TSIGSecretAlg, cfg.RFC2136TAXFR, domainFilter, cfg.DryRun, nil)
 	case "ns1":

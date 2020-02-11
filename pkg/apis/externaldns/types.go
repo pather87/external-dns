@@ -98,6 +98,10 @@ type Config struct {
 	PDNSServer                        string
 	PDNSAPIKey                        string `secure:"yes"`
 	PDNSTLSEnabled                    bool
+	OVHEndpoint                       string
+	OVHApplicationKey                 string
+	OVHApplicationSecret              string
+	OVHConsumerKey                    string
 	TLSCA                             string
 	TLSClientCert                     string
 	TLSClientCertKey                  string
@@ -191,6 +195,10 @@ var defaultConfig = &Config{
 	PDNSServer:                  "http://localhost:8081",
 	PDNSAPIKey:                  "",
 	PDNSTLSEnabled:              false,
+	OVHEndpoint:                 "",
+	OVHApplicationKey:           "",
+	OVHApplicationSecret:        "",
+	OVHConsumerKey:              "",
 	TLSCA:                       "",
 	TLSClientCert:               "",
 	TLSClientCertKey:            "",
@@ -299,7 +307,7 @@ func (cfg *Config) ParseFlags(args []string) error {
 	app.Flag("service-type-filter", "The service types to take care about (default: all, expected: ClusterIP, NodePort, LoadBalancer or ExternalName)").StringsVar(&cfg.ServiceTypeFilter)
 
 	// Flags related to providers
-	app.Flag("provider", "The DNS provider where the DNS records will be created (required, options: aws, aws-sd, google, azure, azure-dns, azure-private-dns, cloudflare, rcodezero, digitalocean, dnsimple, akamai, infoblox, dyn, designate, coredns, skydns, inmemory, pdns, oci, exoscale, linode, rfc2136, ns1, transip, vinyldns, rdns)").Required().PlaceHolder("provider").EnumVar(&cfg.Provider, "aws", "aws-sd", "google", "azure", "azure-dns", "azure-private-dns", "alibabacloud", "cloudflare", "rcodezero", "digitalocean", "dnsimple", "akamai", "infoblox", "dyn", "designate", "coredns", "skydns", "inmemory", "pdns", "oci", "exoscale", "linode", "rfc2136", "ns1", "transip", "vinyldns", "rdns")
+	app.Flag("provider", "The DNS provider where the DNS records will be created (required, options: aws, aws-sd, google, azure, azure-dns, azure-private-dns, cloudflare, rcodezero, digitalocean, dnsimple, akamai, infoblox, dyn, designate, coredns, skydns, inmemory, pdns, oci, ovh, exoscale, linode, rfc2136, ns1, transip, vinyldns, rdns)").Required().PlaceHolder("provider").EnumVar(&cfg.Provider, "aws", "aws-sd", "google", "azure", "azure-dns", "azure-private-dns", "alibabacloud", "cloudflare", "rcodezero", "digitalocean", "dnsimple", "akamai", "infoblox", "dyn", "designate", "coredns", "skydns", "inmemory", "pdns", "oci", "ovh", "exoscale", "linode", "rfc2136", "ns1", "transip", "vinyldns", "rdns")
 	app.Flag("domain-filter", "Limit possible target zones by a domain suffix; specify multiple times for multiple domains (optional)").Default("").StringsVar(&cfg.DomainFilter)
 	app.Flag("exclude-domains", "Exclude subdomains (optional)").Default("").StringsVar(&cfg.ExcludeDomains)
 	app.Flag("zone-id-filter", "Filter target zones by hosted zone id; specify multiple times for multiple zones (optional)").Default("").StringsVar(&cfg.ZoneIDFilter)
@@ -345,6 +353,10 @@ func (cfg *Config) ParseFlags(args []string) error {
 	app.Flag("pdns-server", "When using the PowerDNS/PDNS provider, specify the URL to the pdns server (required when --provider=pdns)").Default(defaultConfig.PDNSServer).StringVar(&cfg.PDNSServer)
 	app.Flag("pdns-api-key", "When using the PowerDNS/PDNS provider, specify the API key to use to authorize requests (required when --provider=pdns)").Default(defaultConfig.PDNSAPIKey).StringVar(&cfg.PDNSAPIKey)
 	app.Flag("pdns-tls-enabled", "When using the PowerDNS/PDNS provider, specify whether to use TLS (default: false, requires --tls-ca, optionally specify --tls-client-cert and --tls-client-cert-key)").Default(strconv.FormatBool(defaultConfig.PDNSTLSEnabled)).BoolVar(&cfg.PDNSTLSEnabled)
+	app.Flag("ovh-endpoint", "").Default("").StringVar(&cfg.OVHEndpoint)
+	app.Flag("ovh-application-key", "").Default("").StringVar(&cfg.OVHApplicationKey)
+	app.Flag("ovh-application-secret", "").Default("").StringVar(&cfg.OVHApplicationSecret)
+	app.Flag("ovh-consumer-key", "").Default("").StringVar(&cfg.OVHConsumerKey)
 	app.Flag("ns1-endpoint", "When using the NS1 provider, specify the URL of the API endpoint to target (default: https://api.nsone.net/v1/)").Default(defaultConfig.NS1Endpoint).StringVar(&cfg.NS1Endpoint)
 	app.Flag("ns1-ignoressl", "When using the NS1 provider, specify whether to verify the SSL certificate (default: false)").Default(strconv.FormatBool(defaultConfig.NS1IgnoreSSL)).BoolVar(&cfg.NS1IgnoreSSL)
 
